@@ -1,6 +1,3 @@
-import { useState, useEffect, useRef } from "react";
-
-// ---------------------------- Shared Data ----------------------------
 const PROFILE = {
   name: "Andrew Tan",
   headline: "CS & Math @ Purdue · ML Researcher · SWE",
@@ -10,8 +7,8 @@ const PROFILE = {
   personalEmail: "andrewt8101@gmail.com",
   phone: "+1 (312) 868-1341",
   location: "West Lafayette, IN",
-  resumeUrl: "/resume.pdf",
-  imageUrl: "/profile.jpg",
+  resumeUrl: "resume.pdf",
+  imageUrl: "profile.jpg",
   socials: [
     { label: "GitHub", href: "https://github.com/andrewt1018/" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/andrewt8101/" },
