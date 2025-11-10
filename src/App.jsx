@@ -1,3 +1,4 @@
+import { useState, useEffect, useMemo } from "react";
 const PROFILE = {
   name: "Andrew Tan",
   headline: "CS & Math @ Purdue · ML Researcher · SWE",
@@ -136,7 +137,30 @@ const Chip = ({ children }) => (
 
 // ---------------------------- Animated Symbols BG (Math + Code) ----------------------------
 function SymbolsBG() {
-  const COUNT = 40; // number of glyphs
+  const COUNT = 40;
+
+  // Compute once; stable across re-renders (tab changes)
+  const cfgs = useMemo(() => {
+    // simple seeded RNG (LCG): stable “random”
+    let s = 0x9e3779b9; // any constant seed
+    const rand = () => {
+      s = (s * 1664525 + 1013904223) >>> 0;
+      return s / 0xffffffff;
+    };
+
+    return Array.from({ length: COUNT }).map((_, i) => {
+      const left = rand() * 95;             // %
+      const top = rand() * 90;              // %
+      const size = 18 + Math.floor(rand() * 6) * 4; // 18–38 px
+      const tx = (i % 2 === 0 ? 1 : -1) * (180 + (i % 5) * 40); // px
+      const ty = -(240 + (i % 7) * 30);     // px upward
+      const dur = 18 + (i % 10);            // s
+      const phase = (i * 0.7) % dur;        // s (negative delay start)
+      const glyph = GLYPHS[i % GLYPHS.length];
+      return { left, top, size, tx, ty, dur, phase, glyph };
+    });
+  }, []);
+
   return (
     <>
       <style>{`
@@ -148,71 +172,63 @@ function SymbolsBG() {
           user-select: none;
           pointer-events: none;
           will-change: transform;
-          opacity: .7; /* keep opacity constant to avoid fade-in look */
+          opacity: .7;
           animation-name: float-rot;
           animation-timing-function: ease-in-out;
           animation-iteration-count: infinite;
-          animation-direction: alternate; /* bounce back to avoid snapping */
+          animation-direction: alternate;
           animation-duration: var(--dur);
-          animation-delay: var(--negDelay); /* negative delay = start mid-cycle */
+          animation-delay: var(--negDelay);
         }
         @keyframes float-rot {
           0%   { transform: translate3d(0,0,0) rotate(0deg); }
           100% { transform: translate3d(var(--tx), var(--ty), 0) rotate(360deg); }
         }
       `}</style>
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        {Array.from({ length: COUNT }).map((_, i) => {
-          const g = GLYPHS[i % GLYPHS.length];
-          // Deterministic layout
-          const left = (i * 97) % 95; // 0–95%
-          const top = (i * 53) % 90;  // 0–90%
-          // Motion + timing
-          const dur = 18 + (i % 10); // seconds
-          const tx = (i % 2 === 0 ? 1 : -1) * (180 + (i % 5) * 40); // px
-          const ty = - (240 + (i % 7) * 30); // px (upward)
-          const phase = (i * 0.7) % dur; // seconds within the cycle
-          const size = 18 + (i % 6) * 4; // 18–38px
-          return (
-            <span
-              key={i}
-              className="glyph"
-              style={{
-                left: `${left}%`,
-                top: `${top}%`,
-                fontSize: `${size}px`,
-                fontFamily: 'Cambria, "Cambria Math", "STIX Two Math", ui-monospace, Menlo, monospace',
-                ['--tx']: `${tx}px`,
-                ['--ty']: `${ty}px`,
-                ['--dur']: `${dur}s`,
-                ['--negDelay']: `-${phase}s`, // start mid-animation immediately
-              }}
-            >
-              {g}
-            </span>
-          );
-        })}
+
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        {cfgs.map((c, i) => (
+          <span
+            key={i}
+            className="glyph"
+            style={{
+              left: `${c.left}vw`,
+              top: `${c.top}vh`,
+              fontSize: `${c.size}px`,
+              fontFamily:
+                'Cambria, "Cambria Math", "STIX Two Math", ui-monospace, Menlo, monospace',
+              ["--tx"]: `${c.tx}px`,
+              ["--ty"]: `${c.ty}px`,
+              ["--dur"]: `${c.dur}s`,
+              ["--negDelay"]: `-${c.phase}s`,
+            }}
+          >
+            {c.glyph}
+          </span>
+        ))}
       </div>
     </>
   );
 }
         
-
 export default function Paper() {
+  const [tab, setTab] = useState("Projects");
+  const tabs = ["Projects", "Experience", "Misc"];
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#f8fafc] text-gray-900">
       {/* Animated symbols background */}
       <SymbolsBG />
-
       <main className="relative z-10 mx-auto max-w-5xl px-6 py-14">
         <header className="mb-10 flex flex-col items-center gap-10 sm:flex-row sm:justify-between">
-          <div className="flex-[1.6] min-w-0 max-w-3xl">
+          <div className="flex-1 max-w-xl">
             <h1 className="text-4xl font-extrabold tracking-tight">{PROFILE.name}</h1>
             <p className="mt-1 text-gray-600">{PROFILE.headline}</p>
-            <section className="w-full mt-6 rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-sm backdrop-blur-sm">
+            <section className="mt-6 rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-sm backdrop-blur-sm">
               <p className="text-gray-700">{PROFILE.summary}</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Chip>{PROFILE.location}</Chip>
+                <Chip>Open to internships</Chip>
               </div>
               <div className="mt-6 flex flex-wrap items-center gap-4 text-sm">
                 <a
@@ -233,6 +249,7 @@ export default function Paper() {
               </div>
             </section>
           </div>
+
 
           <div className="flex w-full flex-col items-center justify-center sm:w-auto">
             {/* Profile picture */}
@@ -273,53 +290,86 @@ export default function Paper() {
             </div>
           </div>
         </header>
+        {/* Tabs */}
+        <h2 className="sr-only">Sections</h2>
+        <div className="mt-12">
+          <div className="inline-flex rounded-xl border border-gray-200 bg-white/80 p-1 shadow-sm backdrop-blur-sm">
+            {tabs.map((name) => (
+              <button
+                key={name}
+                onClick={() => setTab(name)}
+                className={`px-4 py-2 text-sm rounded-lg transition ${tab === name
+                    ? "bg-white shadow font-medium text-gray-900"
+                    : "text-gray-600 hover:text-gray-900"
+                  }`}
+                aria-pressed={tab === name}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
 
-        <h2 className="mt-14 mb-4 text-2xl font-semibold">Projects</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {PROJECTS.map((p) => (
-            <a
-              key={p.title}
-              href={p.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm transition hover:shadow-md"
-            >
-              <div className="flex items-start justify-between">
-                <h3 className="text-lg font-semibold hover:underline">{p.title}</h3>
-                <span className="text-xl">↗</span>
-              </div>
-              <p className="mt-2 text-sm text-gray-700">{p.description}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {p.tags.map((t) => (
-                  <Chip key={t}>{t}</Chip>
+
+          <div className="mt-6">
+            {tab === "Projects" && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {PROJECTS.map((p) => (
+                  <a
+                    key={p.title}
+                    href={p.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm transition hover:shadow-md"
+                  >
+                    <div className="flex items-start justify-between">
+                      <h3 className="text-lg font-semibold hover:underline">{p.title}</h3>
+                      <span className="text-xl">↗</span>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-700">{p.description}</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {p.tags.map((t) => (
+                        <Chip key={t}>{t}</Chip>
+                      ))}
+                    </div>
+                  </a>
                 ))}
               </div>
-            </a>
-          ))}
+            )}
+
+
+            {tab === "Experience" && (
+              <div className="space-y-4">
+                {EXPERIENCE.map((e) => (
+                  <div className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm" key={e.role}>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <h3 className="text-lg font-semibold">{e.role} · {e.org}</h3>
+                      <span className="text-sm text-gray-600">{e.time}</span>
+                    </div>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+                      {e.bullets.map((b, i) => (
+                        <li key={i}>{b}</li>
+                      ))}
+                    </ul>
+                    {e.tags?.length ? (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {e.tags.map((t) => (
+                          <Chip key={t}>{t}</Chip>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            )}
+
+
+            {tab === "Misc" && (
+              <div className="rounded-2xl border border-gray-200 bg-white/90 p-6 text-gray-600 backdrop-blur-sm">
+                More coming soon.
+              </div>
+            )}
+          </div>
         </div>
-
-        <h2 className="mt-14 mb-4 text-2xl font-semibold">Experience</h2>
-        <div className="space-y-4">
-          {EXPERIENCE.map((e) => (
-            <div className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm" key={e.role}>
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 className="text-lg font-semibold">{e.role} · {e.org}</h3>
-                <span className="text-sm text-gray-600">{e.time}</span>
-              </div>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
-                {e.bullets.map((b, i) => (
-                  <li key={i}>{b}</li>
-                ))}
-              </ul>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {e.tags.map((t) => (
-                  <Chip key={t}>{t}</Chip>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
         <div className="mt-14 rounded-2xl border border-gray-200 bg-white/90 p-6 text-sm text-gray-700 backdrop-blur-sm">
           <h2 className="mb-3 text-lg font-semibold">Contact</h2>
           <ul className="space-y-2">
