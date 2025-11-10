@@ -1,8 +1,26 @@
 const PROFILE = {
   name: "Andrew Tan",
   headline: "CS & Math @ Purdue · ML Researcher · SWE",
-  summary:
-    "I build reliable data systems, thoughtful ML experiments, and clean web apps. Previously John Deere (Data Eng), I-GUIDE (geospatial), and IDEAS Lab (ML).",
+  summary: (
+    <>
+      Andrew Tan is a senior studying Computer Science and Math at Purdue University. He was born in New Brunswick, NJ, but raised in Shanghai, China.<br /><br />
+      He is avid about ML research, specifically in the fields of machine unlearning. Currently, he is working closely with Prof.{" "}
+      <a href="https://www.cs.purdue.edu/people/faculty/rajivak.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-500 hover:text-blue-800 transition-colors">
+        Rajiv Khanna
+      </a> 
+      {" "}and Ph. D candidate{" "} 
+      <a href="https://haorantang.github.io/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-500 hover:text-blue-800 transition-colors">
+        Haoran Tang
+      </a> 
+      {" "}on developing a new unlearning algorithm through model unmerging. Feel free to reach out if you're interested!
+    </>
+  ),
   schoolEmail: "tan434@purdue.edu",
   personalEmail: "andrewt8101@gmail.com",
   phone: "+1 (312) 868-1341",
@@ -12,60 +30,96 @@ const PROFILE = {
   socials: [
     { label: "GitHub", href: "https://github.com/andrewt1018/" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/andrewt8101/" },
-    { label: "Scholar", href: "https://www.instagram.com/andrew.t.th/" },
+    { label: "Instagram", href: "https://www.instagram.com/andrew.t.th/" },
   ],
 };
 
 const PROJECTS = [
   {
+    title: "TranslationMerge",
+    description:
+      "User-friendly book reading app that supports in-app translations and free-lance publishing.",
+    tags: ["NLP", "Python", "Model Merging"],
+    link: "https://github.com/andrewt1018/TranslationMerge",
+  },
+  {
+    title: "OuiTravel",
+    description:
+      "Travel planning + documentation web app with community, journaling, and gamification features.",
+    tags: ["React", "CSS", "MongoDB"],
+    link: "https://github.com/andrewt1018/OuiTravel",
+  },
+  {
     title: "Word Search Solver (Java)",
     description:
-      "Generator + solver pipeline; heuristics + pruning for speed; clean CLI + tests.",
+      "Hobby project. Generator + solver pipeline, heuristics + pruning for speed.",
     tags: ["Java", "Algorithms"],
-    link: "https://github.com/andrewtan434/wordsearch-solver",
+    link: "https://github.com/andrewt1018/WordSearchSolver",
   },
   {
-    title: "Data Quality Tracker (John Deere)",
+    title: "ReaderNation",
     description:
-      "Spark/Scala schema + automation for data quality, saving significant annual costs.",
-    tags: ["Spark", "Scala", "Data Eng"],
-    link: "#",
-  },
-  {
-    title: "Machine Unlearning (TPML)",
-    description:
-      "Reframing MU as multitask learning using task-vector projection; early prototype.",
-    tags: ["ML", "Optimization"],
-    link: "#",
-  },
-  {
-    title: "Geospatial Flood Tools (I-GUIDE)",
-    description:
-      "Sedona pipelines for FIM processing, joins with census tracts, and spatial stats.",
-    tags: ["Apache Sedona", "Geospatial"],
-    link: "#",
-  },
+      "User-friendly book reading app that supports in-app translations and free-lance publishing.",
+    tags: ["React", "CSS", "MongoDB"],
+    link: "https://github.com/andrewt1018/ReaderNation",
+  }
 ];
 
 const EXPERIENCE = [
+  {
+    role: "Software Engineering Intern",
+    org: "John Deere",
+    time: "Summer 2025",
+    bullets: [
+      "Explored and integrated CREOSON for browser-based Creo automation",
+      "Enhanced internal MCAD tools through custom Java CREOSON extensions",
+      "Built React app interfacing with CREOSON API for design workflow notes",
+    ],
+    tags: ["Java", "React", "MCAD"]
+  },
   {
     role: "Data Engineering Intern",
     org: "John Deere",
     time: "Summer 2024",
     bullets: [
-      "Designed Spark/Scala table schema + CI for DQ tracking",
+      "Designed Spark/Scala table schema + CI for data quality tracking",
       "Benchmarked RAPIDS GPU vs Photon CPU clusters",
     ],
+    tags: ["Apache Spark", "Scala", "SQL"]
   },
   {
     role: "Research Lead",
     org: "I-GUIDE Datamine",
     time: "2024–2025",
     bullets: [
-      "Led geospatial processing workflows (FIM, Sedona)",
-      "Mentored teammates; reproducible pipelines",
+      "Led geospatial workflow research on flood inundation mapping",
+      "Developed Sedona pipelines for raster polygonization and census joins",
+      "Computed bivariate Moran’s I + LISA statistics with PySAL",
+      "Mentored undergraduates and ensured reproducible workflow design"
     ],
+    tags: ["Apache Sedona", "Python", "Google Cloud Platform"]
   },
+  {
+    role: "Software Developer",
+    org: "Office of the Indiana State Chemist",
+    time: "2023–2024",
+    bullets: [
+      "Developed OCR pipeline for automated Guaranteed Analysis extraction",
+      "Adapted an image dewarping package for improved performance of OCR and NER on preprocessed images"
+    ],
+    tags: ["OCR", "NER", "Python"]
+  },
+  {
+    role: "Data Analytics Intern",
+    org: "Tokio Marine Highland",
+    time: "Summer 2023",
+    bullets: [
+      "Improved flood eligibility and geocoding APIs with ML-based validation",
+      "Developed Python elevation API querying PostgreSQL + AWS S3 datasets",
+      "Optimized data retrieval speed and spatial accuracy for risk models",
+    ],
+    tags: ["Python", "PostgreSQL", "AWS S3", "Boosted Random Forests"]
+  }
 ];
 
 // Math + Code glyphs for animated background
@@ -152,10 +206,10 @@ export default function Paper() {
 
       <main className="relative z-10 mx-auto max-w-5xl px-6 py-14">
         <header className="mb-10 flex flex-col items-center gap-10 sm:flex-row sm:justify-between">
-          <div className="flex-1 max-w-xl">
+          <div className="flex-[1.6] min-w-0 max-w-3xl">
             <h1 className="text-4xl font-extrabold tracking-tight">{PROFILE.name}</h1>
             <p className="mt-1 text-gray-600">{PROFILE.headline}</p>
-            <section className="mt-6 rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-sm backdrop-blur-sm">
+            <section className="w-full mt-6 rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-sm backdrop-blur-sm">
               <p className="text-gray-700">{PROFILE.summary}</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Chip>{PROFILE.location}</Chip>
@@ -181,12 +235,41 @@ export default function Paper() {
           </div>
 
           <div className="flex w-full flex-col items-center justify-center sm:w-auto">
+            {/* Profile picture */}
             <div className="mx-auto h-72 w-72 overflow-hidden rounded-full border border-gray-300 bg-white/90 shadow-md backdrop-blur-sm">
               <img
                 src={PROFILE.imageUrl}
                 alt="Profile of Andrew Tan"
                 className="h-full w-full object-cover"
               />
+            </div>
+
+            {/* Contact info */}
+            <div className="mt-5 text-center text-sm text-gray-700 space-y-1">
+              <div>
+                <a
+                  href={`mailto:${PROFILE.schoolEmail}`}
+                  className="underline-offset-4 hover:underline"
+                >
+                  {PROFILE.schoolEmail}
+                </a>
+              </div>
+              <div>
+                <a
+                  href={`mailto:${PROFILE.personalEmail}`}
+                  className="underline-offset-4 hover:underline"
+                >
+                  {PROFILE.personalEmail}
+                </a>
+              </div>
+              <div>
+                <a
+                  href={`tel:${PROFILE.phone}`}
+                  className="underline-offset-4 hover:underline"
+                >
+                  {PROFILE.phone}
+                </a>
+              </div>
             </div>
           </div>
         </header>
@@ -228,6 +311,11 @@ export default function Paper() {
                   <li key={i}>{b}</li>
                 ))}
               </ul>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {e.tags.map((t) => (
+                  <Chip key={t}>{t}</Chip>
+                ))}
+              </div>
             </div>
           ))}
         </div>
