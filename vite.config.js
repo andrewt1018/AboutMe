@@ -5,5 +5,5 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: "/AboutMe/", // replace with your repo name; use "/" for USERNAME.github.io
+  base: "/", // replace with your repo name; use "/" for USERNAME.github.io
 });
