@@ -196,10 +196,10 @@ const PERSONAL = {
       emoji: "🧩",
       blurb: (
         <>
-          Doing puzzles is part of my daily routine, specifically the NY times wordle, pips, and sudoku. I also like competing with my friends in the LinkedIn mini puzzles. 
+          Puzzles are fun! And they keep my mind active. I do the NY times wordle, pips, and sudoku every day. I also like competing with my friends in the LinkedIn mini puzzles. 
           <br /><br />
           <b>Wordle Streak</b>: {Math.floor((new Date() - new Date("2025-06-09")) / (1000 * 60 * 60 * 24))} <br />
-          <b>Favorite puzzle game</b>: Sudoku (hard mode)<br />
+          <b>Favorite puzzle game</b>: Sudoku (NYT hard mode)<br />
 
         </>
       ),
@@ -533,20 +533,33 @@ export default function Paper() {
         {/* Tabs */}
         <h2 className="sr-only">Sections</h2>
         <div className="mt-12">
-          <div className="inline-flex rounded-xl border border-gray-200 bg-white/80 p-1 shadow-sm backdrop-blur-sm">
-            {tabs.map((name) => (
-              <button
-                key={name}
-                onClick={() => setTab(name)}
-                className={`px-4 py-2 text-sm rounded-lg transition ${tab === name
-                    ? "bg-white shadow font-medium text-gray-900"
-                    : "text-gray-600 hover:text-gray-900"
-                  }`}
-                aria-pressed={tab === name}
-              >
-                {name}
-              </button>
-            ))}
+          <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}`}</style>
+          {/* Edge-to-edge scroll area on mobile */}
+          <div className="-mx-6 sm:mx-0">
+            <div className="relative">
+              <div className="no-scrollbar overflow-x-auto">
+                <div className="px-6 sm:px-0">
+                  <div className="inline-flex min-w-max gap-1 rounded-xl border border-gray-200 bg-white/80 p-1 shadow-sm backdrop-blur-sm">
+                    {tabs.map((name) => (
+                      <button
+                        key={name}
+                        onClick={() => setTab(name)}
+                        className={`shrink-0 whitespace-nowrap px-4 py-2 text-sm rounded-lg transition ${tab === name
+                            ? "bg-white shadow font-medium text-gray-900"
+                            : "text-gray-600 hover:text-gray-900"
+                          }`}
+                        aria-pressed={tab === name}
+                      >
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              {/* Fades to hint scrollability on mobile */}
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#f8fafc] to-transparent sm:hidden" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#f8fafc] to-transparent sm:hidden" />
+            </div>
           </div>
 
 
