@@ -39,9 +39,10 @@ const PROJECTS = [
   {
     title: "TranslationMerge",
     description:
-      "User-friendly book reading app that supports in-app translations and free-lance publishing.",
-    tags: ["NLP", "Python", "Model Merging"],
+      "Research project seeking to merge lightweight translation models using SoTA merging techniques.",
+    tags: ["NLP", "PyTorch", "Model Merging"],
     link: "https://github.com/andrewt1018/TranslationMerge",
+    visibility: "Private"
   },
   {
     title: "OuiTravel",
@@ -49,6 +50,7 @@ const PROJECTS = [
       "Travel planning + documentation web app with community, journaling, and gamification features.",
     tags: ["React", "CSS", "MongoDB"],
     link: "https://github.com/andrewt1018/OuiTravel",
+    visibility: "Public"
   },
   {
     title: "Word Search Solver (Java)",
@@ -56,6 +58,7 @@ const PROJECTS = [
       "Hobby project. Generator + solver pipeline, heuristics + pruning for speed.",
     tags: ["Java", "Algorithms"],
     link: "https://github.com/andrewt1018/WordSearchSolver",
+    visibility: "Public"
   },
   {
     title: "ReaderNation",
@@ -63,6 +66,7 @@ const PROJECTS = [
       "User-friendly book reading app that supports in-app translations and free-lance publishing.",
     tags: ["React", "CSS", "MongoDB"],
     link: "https://github.com/andrewt1018/ReaderNation",
+    visibility: "Private"
   }
 ];
 
@@ -98,7 +102,7 @@ const EXPERIENCE = [
       "Computed bivariate Moran’s I + LISA statistics with PySAL",
       "Mentored undergraduates and ensured reproducible workflow design"
     ],
-    tags: ["Apache Sedona", "Python", "Google Cloud Platform"]
+    tags: ["Apache Sedona", "Distributed Systems", "Google Cloud Platform"]
   },
   {
     role: "Software Developer",
@@ -123,8 +127,90 @@ const EXPERIENCE = [
   }
 ];
 
+const SKILLS = [
+  {
+    title: "Languages",
+    items: ["Python", "Scala", "Java", "C/C++", "SQL", "JavaScript/TypeScript", "x86-64 ASM"],
+  },
+  {
+    title: "Data & ML",
+    items: ["PyTorch", "scikit-learn", "Apache Spark", "Apache Sedona", "WandB", "Pandas"],
+  },
+  {
+    title: "Web",
+    items: ["React", "Vite", "Tailwind", "Node.js", "REST/HTTP", "JSON", "CREOSON"],
+  },
+  {
+    title: "Cloud & Tools",
+    items: ["AWS SAA", "Databricks", "Docker", "GitHub Actions", "SBT", "GCP", "PostgreSQL"],
+  },
+];
+
+const PERSONAL = {
+  blurb: (
+    <>
+      Thanks for checking out my page! I'm a CS + Math student at Purdue who loves doing ML research and building clean web apps. In my spare time, I'm likely playing volleyball, pingpong, or doing the daily NY Times puzzles.
+    </>
+  ),
+  hobbies: [
+    {
+      title: "Volleyball",
+      emoji: "🏐",
+      blurb: (
+        <>
+          Played for 9+ years now. Varsity captain in highschool, and part of the Purdue men's Volleyball Club. <br /><br />
+          <b>Position</b>: Outside Hitter<br />
+          <b>Favorite player</b >: Yuji Nishida <br />
+          <b>Favorite team</b>: Team Japan<br />
+        </>
+      ),
+    },
+    {
+      title: "Ping Pong",
+      emoji: "🏓",
+      blurb: (
+        <>
+          Played for around 2 years now. Definitely still have a lot of room to improve especially with reading and counteracting heavy spin.
+          <br /><br />
+          <b>Grip</b>: Penhold<br />
+          <b>Favorite player</b >: Xu Xin 
+        </>
+      ),
+    },
+    {
+      title: "Reading",
+      emoji: "📚",
+      blurb: (
+        <>
+          Fantasy {">"} Sci-Fi {">"}{">"} other genres. Maybe reading <i>Harry Potter</i> growing up made me biased toward fantasy. 
+          <br /><br />
+          <b>Favorite Genre</b>: Fantasy<br />
+          <b>Favorite Author</b>: Rebecca F. Kuang<br />
+          <b>Favorite Series</b>: The Poppy Wars Trilogy<br />
+          <b>Favorite Book</b>: <i>Project Hail Mary</i>
+        </>
+      ),
+    },
+    {
+      title: "Puzzles",
+      emoji: "🧩",
+      blurb: (
+        <>
+          Doing puzzles is part of my daily routine, specifically the NY times wordle, pips, and sudoku. I also like competing with my friends in the LinkedIn mini puzzles. 
+          <br /><br />
+          <b>Wordle Streak</b>: {Math.floor((new Date() - new Date("2025-06-09")) / (1000 * 60 * 60 * 24))} <br />
+          <b>Favorite puzzle game</b>: Sudoku (hard mode)<br />
+
+        </>
+      ),
+    },
+  ],
+};
+
+
+
 // Math + Code glyphs for animated background
-const GLYPHS = ["∑", "π", "∫", "√", "∞", "λ", "Δ", "{}", "</>", "()", "::=", "|>"];
+const GLYPHS = ["∑", "π", "∫", "√", "∞", "λ", "Δ", "{}", "</>", "()", ":=", "∀", "∃", "θ", "ψ"];
 
 const Link = (props) => (
   <a {...props} className={(props.className ?? "") + " underline-offset-4 hover:underline"} />
@@ -210,10 +296,165 @@ function SymbolsBG() {
     </>
   );
 }
+
+// ---------------------------- Projects Section ----------------------------
+function ProjectsSection() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      {PROJECTS.map((p) => {
+        const isPrivate = p.visibility?.toLowerCase?.() === "private";
+        const CardBase = ({ children }) => (
+          <div className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm">
+            {children}
+          </div>
+        );
+
+
+        if (isPrivate) {
+          return (
+            <CardBase key={p.title}>
+              <div className="flex items-start justify-between">
+                <h3 className="text-lg font-semibold">{p.title}</h3>
+                <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-gray-700">
+                  <span aria-hidden>🔒</span> Private
+                </span>
+              </div>
+              <p className="mt-2 text-sm text-gray-700">{p.description}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {p.tags.map((t) => (
+                  <Chip key={t}>{t}</Chip>
+                ))}
+              </div>
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-600">
+                <span className="">Repository is private.</span>
+                {PROFILE.personalEmail ? (
+                  <a
+                    href={`mailto:${PROFILE.personalEmail}?subject=${encodeURIComponent("Access request: " + p.title)}&body=${encodeURIComponent("Hi Andrew, I'd like to request access to this repository: " + p.title + ". Thanks!")}`}
+                    className="rounded-lg border px-3 py-1 font-medium text-gray-700 hover:shadow"
+                  >
+                    Request access
+                  </a>
+                ) : null}
+              </div>
+            </CardBase>
+          );
+        }
+
+
+        // Public project → normal link card
+        return (
+          <a
+            key={p.title}
+            href={p.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm transition hover:shadow-md"
+          >
+            <div className="flex items-start justify-between">
+              <h3 className="text-lg font-semibold hover:underline">{p.title}</h3>
+              <span className="text-xl">↗</span>
+            </div>
+            <p className="mt-2 text-sm text-gray-700">{p.description}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {p.tags.map((t) => (
+                <Chip key={t}>{t}</Chip>
+              ))}
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  )
+}
+
+// ---------------------------- Projects Section ----------------------------
+function ExperiencesSection() {
+ return (
+   <div className="space-y-4">
+     {EXPERIENCE.map((e) => (
+       <div className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm" key={e.role}>
+         <div className="flex flex-wrap items-baseline justify-between gap-2">
+           <h3 className="text-lg font-semibold">{e.role} · {e.org}</h3>
+           <span className="text-sm text-gray-600">{e.time}</span>
+         </div>
+         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+           {e.bullets.map((b, i) => (
+             <li key={i}>{b}</li>
+           ))}
+         </ul>
+         {e.tags?.length ? (
+           <div className="mt-3 flex flex-wrap gap-2">
+             {e.tags.map((t) => (
+               <Chip key={t}>{t}</Chip>
+             ))}
+           </div>
+         ) : null}
+       </div>
+     ))}
+   </div>
+ )
+}
+
+// ---------------------------- Skills Section ----------------------------
+function SkillsSection() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      {SKILLS.map((cat) => (
+        <div
+          key={cat.title}
+          className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm"
+        >
+          <h3 className="text-base font-semibold">{cat.title}</h3>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {cat.items.map((t) => (
+              <Chip key={t}>{t}</Chip>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------- Personal Section ----------------------------
+function PersonalSection() {
+  return (
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-sm backdrop-blur-sm">
+        <h3 className="text-base font-semibold">About Me</h3>
+        <p className="mt-2 text-gray-700 leading-relaxed">{PERSONAL.blurb}</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {PERSONAL.hobbies.map((h) => (
+          <div
+            key={h.title}
+            className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl" aria-hidden>{h.emoji}</span>
+              <h4 className="text-lg font-semibold">{h.title}</h4>
+            </div>
+            <p className="mt-2 text-sm text-gray-700">{h.blurb}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------- Misc. Section ----------------------------
+function MiscSection() {
+ return (
+   <div className="rounded-2xl border border-gray-200 bg-white/90 p-6 text-gray-600 backdrop-blur-sm">
+     More coming soon.
+   </div>
+ )
+}
         
 export default function Paper() {
   const [tab, setTab] = useState("Projects");
-  const tabs = ["Projects", "Experience", "Misc"];
+  const tabs = ["Projects", "Experiences", "Skills", "Personal", "Misc."];
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#f8fafc] text-gray-900">
@@ -228,7 +469,6 @@ export default function Paper() {
               <p className="text-gray-700">{PROFILE.summary}</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Chip>{PROFILE.location}</Chip>
-                <Chip>Open to internships</Chip>
               </div>
               <div className="mt-6 flex flex-wrap items-center gap-4 text-sm">
                 <a
@@ -311,63 +551,15 @@ export default function Paper() {
 
 
           <div className="mt-6">
-            {tab === "Projects" && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                {PROJECTS.map((p) => (
-                  <a
-                    key={p.title}
-                    href={p.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm transition hover:shadow-md"
-                  >
-                    <div className="flex items-start justify-between">
-                      <h3 className="text-lg font-semibold hover:underline">{p.title}</h3>
-                      <span className="text-xl">↗</span>
-                    </div>
-                    <p className="mt-2 text-sm text-gray-700">{p.description}</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {p.tags.map((t) => (
-                        <Chip key={t}>{t}</Chip>
-                      ))}
-                    </div>
-                  </a>
-                ))}
-              </div>
-            )}
+            {tab === "Projects" && <ProjectsSection />}
 
+            {tab === "Experiences" && <ExperiencesSection />}
 
-            {tab === "Experience" && (
-              <div className="space-y-4">
-                {EXPERIENCE.map((e) => (
-                  <div className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm" key={e.role}>
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <h3 className="text-lg font-semibold">{e.role} · {e.org}</h3>
-                      <span className="text-sm text-gray-600">{e.time}</span>
-                    </div>
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
-                      {e.bullets.map((b, i) => (
-                        <li key={i}>{b}</li>
-                      ))}
-                    </ul>
-                    {e.tags?.length ? (
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {e.tags.map((t) => (
-                          <Chip key={t}>{t}</Chip>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
-                ))}
-              </div>
-            )}
+            {tab === "Skills" && <SkillsSection />}
 
+            {tab === "Personal" && <PersonalSection />}
 
-            {tab === "Misc" && (
-              <div className="rounded-2xl border border-gray-200 bg-white/90 p-6 text-gray-600 backdrop-blur-sm">
-                More coming soon.
-              </div>
-            )}
+            {tab === "Misc." && <MiscSection />}
           </div>
         </div>
         <div className="mt-14 rounded-2xl border border-gray-200 bg-white/90 p-6 text-sm text-gray-700 backdrop-blur-sm">
