@@ -7,6 +7,12 @@ if (MEASUREMENT_ID) {
   ReactGA.initialize(MEASUREMENT_ID);
 }
 
+const track = (name, params = {}) => {
+  if (!MEASUREMENT_ID) return;
+  // GA4-friendly: send a named event with parameters
+  ReactGA.gtag("event", name, params);
+};
+
 const PROFILE = {
   name: "Andrew Tan",
   headline: "CS & Math @ Purdue · ML Researcher · SWE",
@@ -357,6 +363,12 @@ function ProjectsSection() {
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm transition hover:shadow-md"
+            onClick={() =>
+              track("project_open", {
+                title: p.title,
+                visibility: p.visibility ?? "public",
+              })
+            }
           >
             <div className="flex items-start justify-between">
               <h3 className="text-lg font-semibold hover:underline">{p.title}</h3>
@@ -491,6 +503,12 @@ export default function Paper() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-xl border border-gray-200 px-4 py-2 font-medium hover:shadow"
+                  onClick={() =>
+                    track("resume_download", {
+                      file_name: "resume.pdf",
+                      method: "header_button",
+                    })
+                  }
                 >
                   Download Resume
                 </a>
@@ -558,7 +576,10 @@ export default function Paper() {
                     {tabs.map((name) => (
                       <button
                         key={name}
-                        onClick={() => setTab(name)}
+                        onClick={() => {
+                          setTab(name);
+                          track("tab_change", { tab: name });
+                        }}
                         className={`shrink-0 whitespace-nowrap px-4 py-2 text-sm rounded-lg transition ${tab === name
                             ? "bg-white shadow font-medium text-gray-900"
                             : "text-gray-600 hover:text-gray-900"
