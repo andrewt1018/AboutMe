@@ -1,4 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
+import ReactGA from "react-ga4";
+
+const MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+
+if (MEASUREMENT_ID) {
+  ReactGA.initialize(MEASUREMENT_ID);
+}
+
 const PROFILE = {
   name: "Andrew Tan",
   headline: "CS & Math @ Purdue · ML Researcher · SWE",
@@ -447,12 +455,19 @@ function PersonalSection() {
 function MiscSection() {
  return (
    <div className="rounded-2xl border border-gray-200 bg-white/90 p-6 text-gray-600 backdrop-blur-sm">
-     More coming soon.
+     More coming soon!
    </div>
  )
 }
         
 export default function Paper() {
+  useEffect(() => {
+    if (MEASUREMENT_ID) {
+      // Send initial pageview when site loads
+      ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+    }
+  }, []);
+
   const [tab, setTab] = useState("Projects");
   const tabs = ["Projects", "Experiences", "Skills", "Personal", "Misc."];
 
