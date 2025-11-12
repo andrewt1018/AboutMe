@@ -26,7 +26,7 @@ const PROFILE = {
         className="text-blue-500 hover:text-blue-800 transition-colors">
         Rajiv Khanna
       </a> 
-      {" "}and Ph. D candidate{" "} 
+      {" "}and PhD candidate{" "} 
       <a href="https://haorantang.github.io/"
         target="_blank"
         rel="noopener noreferrer"
