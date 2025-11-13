@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useLayoutEffect } from "react";
 import ReactGA from "react-ga4";
 
 const MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
@@ -40,8 +40,12 @@ const PROFILE = {
   personalEmail: "andrewt8101@gmail.com",
   phone: "+1 (312) 868-1341",
   location: "West Lafayette, IN",
-  resumeUrl: "resume.pdf",
-  imageUrl: "profile.jpg",
+  public: {
+    resumeUrl: "resume.pdf",
+    imageUrl: "profile.jpg",
+    mlCertUrl: "ml_cert.pdf",
+    awsCertUrl: "aws_cert.pdf"
+  },
   socials: [
     { label: "GitHub", href: "https://github.com/andrewt1018/" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/andrewt8101/" },
@@ -143,12 +147,48 @@ const EXPERIENCE = [
 
 const SKILLS = [
   {
+    title: "Certifications",
+    items: [(
+      <>
+        <a
+          href={PROFILE.public.awsCertUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:text-blue-800 transition-colors"
+          onClick={() =>
+            track("aws_cert_view", {
+              file_name: PROFILE.public.awsCertUrl,
+              method: "header_button",
+            })
+          }
+        >
+          AWS - Solutions Architect Associate
+        </a>
+      </>
+    ), (
+      <>
+        <a href={PROFILE.public.mlCertUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:text-blue-800 transition-colors"
+          onClick={() =>
+            track("ml_cert_view", {
+              file_name: PROFILE.public.mlCertUrl,
+              method: "header_button",
+            })
+          }>
+          Coursera - Machine Learning
+        </a>
+      </>
+    )]
+  },
+  {
     title: "Languages",
-    items: ["Python", "Scala", "Java", "C/C++", "SQL", "JavaScript/TypeScript", "x86-64 ASM"],
+    items: ["Python", "Scala", "Java", "C/C++", "MySQL/PostgreSQL", "JavaScript/TypeScript", "x86-64 ASM", "Bash"],
   },
   {
     title: "Data & ML",
-    items: ["PyTorch", "scikit-learn", "Apache Spark", "Apache Sedona", "WandB", "Pandas"],
+    items: ["PyTorch", "Scikit-learn", "Apache Spark", "Apache Sedona", "WandB", "Pandas"],
   },
   {
     title: "Web",
@@ -156,8 +196,8 @@ const SKILLS = [
   },
   {
     title: "Cloud & Tools",
-    items: ["AWS SAA", "Databricks", "Docker", "GitHub Actions", "SBT", "GCP", "PostgreSQL"],
-  },
+    items: ["AWS", "Databricks", "GCP", "Docker", "GitHub Actions", "SBT"],
+  }
 ];
 
 const PERSONAL = {
@@ -220,8 +260,6 @@ const PERSONAL = {
     },
   ],
 };
-
-
 
 // Math + Code glyphs for animated background
 const GLYPHS = ["∑", "π", "∫", "√", "∞", "λ", "Δ", "{}", "</>", "()", ":=", "∀", "∃", "θ", "ψ"];
@@ -426,9 +464,19 @@ function SkillsSection() {
         >
           <h3 className="text-base font-semibold">{cat.title}</h3>
           <div className="mt-3 flex flex-wrap gap-2">
-            {cat.items.map((t) => (
-              <Chip key={t}>{t}</Chip>
-            ))}
+            {cat.title === "Certifications" ? (
+              <div className="flex flex-col space-y-2">
+                {cat.items.map((t, i) => (
+                  <div key={i}>{t}</div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {cat.items.map((t, i) => (
+                  <Chip key={i}>{t}</Chip>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       ))}
@@ -471,7 +519,7 @@ function MiscSection() {
    </div>
  )
 }
-        
+   
 export default function Paper() {
   useEffect(() => {
     if (MEASUREMENT_ID) {
@@ -482,6 +530,45 @@ export default function Paper() {
 
   const [tab, setTab] = useState("Experiences");
   const tabs = ["Experiences", "Projects", "Skills", "Personal", "Misc."];
+
+  const barRef = useRef(null);
+  const scrollRef = useRef(null);
+  const tabRefs = useRef([]);
+  const [indicator, setIndicator] = useState({ x: 0, w: 0 });
+
+  const LEFT_OFFSET = -5; // adjust -1 to -6 depending on your eye preference
+
+  function measureIndicator() {
+    const i = tabs.indexOf(tab);
+    const el = tabRefs.current[i];
+    const bar = barRef.current;
+    if (!el || !bar) return;
+
+    const elRect = el.getBoundingClientRect();
+    const barRect = bar.getBoundingClientRect();
+
+    const x = elRect.left - barRect.left + LEFT_OFFSET;
+    const w = elRect.width;
+
+    setIndicator({ x, w });
+  }
+
+  // run AFTER layout when `tab` changes (and on mount)
+  useLayoutEffect(() => {
+    // measure on the next frame in case fonts/style transitions apply
+    const id = requestAnimationFrame(measureIndicator);
+    const onResize = () => requestAnimationFrame(measureIndicator);
+    const onScroll = () => requestAnimationFrame(measureIndicator);
+
+    window.addEventListener("resize", onResize);
+    scrollRef.current?.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(id);
+      window.removeEventListener("resize", onResize);
+      scrollRef.current?.removeEventListener("scroll", onScroll);
+    };
+  }, [tab]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#f8fafc] text-gray-900">
@@ -499,13 +586,13 @@ export default function Paper() {
               </div>
               <div className="mt-6 flex flex-wrap items-center gap-4 text-sm">
                 <a
-                  href={PROFILE.resumeUrl}
+                  href={PROFILE.public.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-xl border border-gray-200 px-4 py-2 font-medium hover:shadow"
                   onClick={() =>
                     track("resume_download", {
-                      file_name: "resume.pdf",
+                      file_name: PROFILE.public.resumeUrl,
                       method: "header_button",
                     })
                   }
@@ -528,7 +615,7 @@ export default function Paper() {
             {/* Profile picture */}
             <div className="mx-auto h-72 w-72 overflow-hidden rounded-full border border-gray-300 bg-white/90 shadow-md backdrop-blur-sm">
               <img
-                src={PROFILE.imageUrl}
+                src={PROFILE.public.imageUrl}
                 alt="Profile of Andrew Tan"
                 className="h-full w-full object-cover"
               />
@@ -566,25 +653,40 @@ export default function Paper() {
         {/* Tabs */}
         <h2 className="sr-only">Sections</h2>
         <div className="mt-12">
-          <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}`}</style>
-          {/* Edge-to-edge scroll area on mobile */}
-          <div className="-mx-6 sm:mx-0">
+          <style>{`
+            .no-scrollbar::-webkit-scrollbar{display:none}
+            .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+            @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+            .animate-fade-in{animation:fadeIn .25s ease-out}
+          `}</style>
+
+
+          {/* Sticky tab bar (mobile-friendly, scrollable) */}
+          <div className="sticky top-0 z-20 -mx-6 bg-[#f8fafc]/80 pt-2 backdrop-blur supports-backdrop-filter:bg-[#f8fafc]/60 sm:mx-0">
             <div className="relative">
-              <div className="no-scrollbar overflow-x-auto">
+              <div ref={scrollRef} className="no-scrollbar overflow-x-auto">
                 <div className="px-6 sm:px-0">
-                  <div className="inline-flex min-w-max gap-1 rounded-xl border border-gray-200 bg-white/80 p-1 shadow-sm backdrop-blur-sm">
-                    {tabs.map((name) => (
+                  <div ref={barRef} className="relative inline-flex min-w-max gap-1 rounded-xl border border-gray-200 bg-white/90 p-1 shadow-sm backdrop-blur-sm">
+                    {/* Animated indicator */}
+                    <span
+                      className="pointer-events-none absolute bottom-0 h-0.5 rounded bg-amber-500 transition-transform duration-300"
+                      style={{
+                        width: `${indicator.w}px`,
+                        transform: `translateX(${indicator.x}px)`,
+                      }}
+                    />
+                    {tabs.map((name, i) => (
                       <button
                         key={name}
-                        onClick={() => {
-                          setTab(name);
-                          track("tab_change", { tab: name });
-                        }}
-                        className={`shrink-0 whitespace-nowrap px-4 py-2 text-sm rounded-lg transition ${tab === name
-                            ? "bg-white shadow font-medium text-gray-900"
-                            : "text-gray-600 hover:text-gray-900"
+                        ref={(el) => (tabRefs.current[i] = el)}
+                        className={`shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-[15px] transition ${tab === name ? "bg-white shadow text-gray-900" : "text-gray-600 hover:text-gray-900"
                           }`}
                         aria-pressed={tab === name}
+                        onClick={() => {
+                          setTab(name);
+                          // if GA is present, log tab change
+                          try { ReactGA?.gtag?.("event", "tab_change", { tab: name }); } catch { }
+                        }}
                       >
                         {name}
                       </button>
@@ -592,14 +694,14 @@ export default function Paper() {
                   </div>
                 </div>
               </div>
-              {/* Fades to hint scrollability on mobile */}
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#f8fafc] to-transparent sm:hidden" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#f8fafc] to-transparent sm:hidden" />
+              {/* gradient edges to hint scrollability */}
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-linear-to-r from-[#f8fafc] to-transparent sm:hidden" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-linear-to-l from-[#f8fafc] to-transparent sm:hidden" />
             </div>
           </div>
 
 
-          <div className="mt-6">
+          <div className="mt-6 animate-fade-in">
             {tab === "Experiences" && <ExperiencesSection />}
             
             {tab === "Projects" && <ProjectsSection />}
