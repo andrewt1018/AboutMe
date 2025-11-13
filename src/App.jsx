@@ -480,8 +480,8 @@ export default function Paper() {
     }
   }, []);
 
-  const [tab, setTab] = useState("Projects");
-  const tabs = ["Projects", "Experiences", "Skills", "Personal", "Misc."];
+  const [tab, setTab] = useState("Experiences");
+  const tabs = ["Experiences", "Projects", "Skills", "Personal", "Misc."];
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#f8fafc] text-gray-900">
@@ -600,9 +600,9 @@ export default function Paper() {
 
 
           <div className="mt-6">
-            {tab === "Projects" && <ProjectsSection />}
-
             {tab === "Experiences" && <ExperiencesSection />}
+            
+            {tab === "Projects" && <ProjectsSection />}
 
             {tab === "Skills" && <SkillsSection />}
 
