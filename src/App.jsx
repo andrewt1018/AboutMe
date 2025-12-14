@@ -60,7 +60,7 @@ const PROJECTS = [
       "Research project seeking to merge lightweight translation models using SoTA merging techniques.",
     tags: ["NLP", "PyTorch", "Model Merging"],
     link: "https://github.com/andrewt1018/TranslationMerge",
-    visibility: "Private"
+    visibility: "Public"
   },
   {
     title: "OuiTravel",
